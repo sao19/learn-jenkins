@@ -18,7 +18,7 @@ pipeline {
       steps {
         script {
           echo "Push the application to registries......"
-          sh 'docker build -t localhost:8083/my-app:jenkins-pipeline'
+          sh 'docker build -t localhost:8083/my-app:jenkins-pipeline .'
           withCredentials([usernamePasswod(credentialId: 'nexus', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
             sh "echo $PASS | docker login -u $USER --pasword-stdin localhost:8083"
             sh 'docker push localhost:8083/my-app:jenkins-pipeline'
