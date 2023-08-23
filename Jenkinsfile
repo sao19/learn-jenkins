@@ -5,23 +5,23 @@ pipeline {
   }
 
   stages {
-    stage('Build') {
+    stage('Build Jar') {
       steps {
         script {
           echo "Building the application....."
-          mvn package
-          docker build -t localhost:8083/my-app:jenkins-pipeline
+          sh 'mvn package'
         }
       }
     }
 
-    stage('Push to registry') {
+    stage('Create Image') {
       steps {
         script {
           echo "Push the application to registries......"
+          sh 'docker build -t localhost:8083/my-app:jenkins-pipeline'
           withCredentials([usernamePasswod(credentialId: 'nexus', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-            echo "$PASS" | docker login -u "$USER" --pasword-stdin localhost:8083
-            docker push localhost:8083/my-app:jenkins-pipeline
+            sh "echo $PASS | docker login -u $USER --pasword-stdin localhost:8083"
+            sh 'docker push localhost:8083/my-app:jenkins-pipeline'
           }
         }
       }
